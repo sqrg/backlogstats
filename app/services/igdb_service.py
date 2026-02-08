@@ -57,7 +57,7 @@ class IGDBService:
         # We're requesting: name, platforms (with names), release_dates (with human-readable format), and cover image
         body = f"""
         search "{query}";
-        fields name, platforms.name, release_dates.date, release_dates.human, cover.image_id;
+        fields name, platforms.name, release_dates.date, release_dates.human, release_dates.platform.name, cover.image_id;
         limit {limit};
         """
 
@@ -101,7 +101,7 @@ class IGDBService:
         # Request comprehensive game data
         body = f"""
         fields name, summary, storyline, platforms.name, release_dates.date, release_dates.human,
-               cover.image_id, genres.name, involved_companies.company.name,
+               release_dates.platform.name, cover.image_id, genres.name, involved_companies.company.name,
                involved_companies.developer, involved_companies.publisher,
                rating, aggregated_rating;
         where id = {game_id};

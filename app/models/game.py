@@ -10,6 +10,7 @@ class Platform(BaseModel):
 class ReleaseDate(BaseModel):
     date: Optional[int] = None
     human: Optional[str] = None
+    platform: Optional[Platform] = None
 
 
 class Cover(BaseModel):
