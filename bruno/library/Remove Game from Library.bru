@@ -1,0 +1,21 @@
+meta {
+  name: Remove Game from Library
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/library/games/1025
+  body: none
+  auth: none
+}
+
+docs {
+  Remove a game from your personal library by its IGDB ID.
+
+  Path Parameters:
+  - igdb_id: The IGDB game ID to remove (integer > 0)
+
+  Returns: 204 No Content on successful deletion
+  Returns: 404 Not Found if the game is not in your library
+}

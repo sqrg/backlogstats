@@ -1,0 +1,29 @@
+meta {
+  name: Search Games
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/games/search?q=zelda&limit=10
+  body: none
+  auth: none
+}
+
+params:query {
+  q: zelda
+  limit: 10
+}
+
+docs {
+  Search for games by name using the IGDB API.
+
+  Query Parameters:
+  - q (required): Search query string (min length: 1)
+  - limit (optional): Number of results to return (default: 10, range: 1-50)
+
+  Example searches:
+  - ?q=zelda
+  - ?q=final%20fantasy&limit=20
+  - ?q=mario&limit=5
+}

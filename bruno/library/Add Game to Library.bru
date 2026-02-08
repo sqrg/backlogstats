@@ -1,0 +1,34 @@
+meta {
+  name: Add Game to Library
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/library/games
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "igdb_id": 1025
+  }
+}
+
+docs {
+  Add a game to your personal library by its IGDB ID.
+
+  Request Body:
+  - igdb_id (required): The IGDB game ID to add
+
+  The game data will be fetched from IGDB and cached locally.
+
+  Example IGDB IDs to try:
+  - 1025: The Legend of Zelda: Breath of the Wild
+  - 1942: The Witcher 3: Wild Hunt
+  - 119133: Elden Ring
+  - 26192: Hollow Knight
+
+  Returns: 201 Created with the added game details
+}

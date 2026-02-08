@@ -1,0 +1,21 @@
+meta {
+  name: Get Library Game
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/library/games/1025
+  body: none
+  auth: none
+}
+
+docs {
+  Get a specific game from your library by its IGDB ID.
+
+  Path Parameters:
+  - igdb_id: The IGDB game ID (integer > 0)
+
+  Returns: 200 OK with the game details if found
+  Returns: 404 Not Found if the game is not in your library
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Get Game Details
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/games/1025
+  body: none
+  auth: none
+}
+
+docs {
+  Get detailed information about a specific game by its IGDB ID.
+
+  Path Parameters:
+  - game_id: The IGDB game ID (integer > 0)
+
+  Example IDs:
+  - 1025: The Legend of Zelda: Breath of the Wild
+  - 1942: The Witcher 3: Wild Hunt
+  - 119133: Elden Ring
+
+  Returns detailed game info including:
+  - Name, summary, storyline
+  - Platforms, genres
+  - Cover images (multiple resolutions)
+  - Release dates
+  - Involved companies (developers, publishers)
+  - Ratings
+}
