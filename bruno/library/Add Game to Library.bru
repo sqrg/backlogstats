@@ -7,28 +7,46 @@ meta {
 post {
   url: {{baseUrl}}/library/games
   body: json
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 body:json {
   {
-    "igdb_id": 1025
+    "igdb_id": 1025,
+    "platform_igdb_id": 130,
+    "platform_name": "Nintendo Switch"
   }
 }
 
 docs {
-  Add a game to your personal library by its IGDB ID.
+  Add a game to your collection for a specific platform.
+
+  The same game can be added for different platforms.
 
   Request Body:
   - igdb_id (required): The IGDB game ID to add
+  - platform_igdb_id (required): The IGDB platform ID
+  - platform_name (required): The platform display name
 
-  The game data will be fetched from IGDB and cached locally.
+  Common platform IGDB IDs:
+  - 6: PC (Microsoft Windows)
+  - 48: PlayStation 4
+  - 49: Xbox One
+  - 130: Nintendo Switch
+  - 167: PlayStation 5
+  - 169: Xbox Series X|S
 
-  Example IGDB IDs to try:
+  Example IGDB game IDs to try:
   - 1025: The Legend of Zelda: Breath of the Wild
   - 1942: The Witcher 3: Wild Hunt
   - 119133: Elden Ring
   - 26192: Hollow Knight
 
   Returns: 201 Created with the added game details
+  Returns: 400 Bad Request if game already in collection for this platform
+  Returns: 401 Unauthorized if not authenticated
 }

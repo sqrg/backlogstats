@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from app.routers import games, library
+from app.routers import auth, games, library
 from app.core.database import create_db_and_tables
 
 load_dotenv()
@@ -30,6 +30,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(games.router)
 app.include_router(library.router)
 

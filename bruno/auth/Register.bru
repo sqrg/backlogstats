@@ -1,0 +1,36 @@
+meta {
+  name: Register
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "testuser",
+    "email": "testuser@example.com",
+    "password": "password123"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("accessToken", res.body.access_token)
+  bru.setEnvVar("refreshToken", res.body.refresh_token)
+}
+
+docs {
+  Register a new user account.
+  
+  Request Body:
+  - username (required): 3-50 characters
+  - email (required): Valid email address
+  - password (required): Minimum 8 characters
+  
+  Returns: 201 Created with access_token, refresh_token, and token_type
+  Returns: 409 Conflict if username or email already exists
+}

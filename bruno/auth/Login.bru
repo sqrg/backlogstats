@@ -1,0 +1,29 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "testuser",
+    "password": "password123"
+  }
+}
+
+docs {
+  Authenticate with username and password.
+
+  Request Body:
+  - username (required): Your username
+  - password (required): Your password
+
+  Returns: 200 OK with access_token, refresh_token, and token_type
+  Returns: 401 Unauthorized if credentials are invalid
+}

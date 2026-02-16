@@ -5,17 +5,23 @@ meta {
 }
 
 delete {
-  url: {{baseUrl}}/library/games/1025
+  url: {{baseUrl}}/library/games/1025/platforms/130
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 docs {
-  Remove a game from your personal library by its IGDB ID.
+  Remove a specific game+platform entry from your collection.
 
   Path Parameters:
   - igdb_id: The IGDB game ID to remove (integer > 0)
+  - platform_igdb_id: The IGDB platform ID (integer > 0)
 
   Returns: 204 No Content on successful deletion
-  Returns: 404 Not Found if the game is not in your library
+  Returns: 404 Not Found if the game+platform is not in your collection
+  Returns: 401 Unauthorized if not authenticated
 }

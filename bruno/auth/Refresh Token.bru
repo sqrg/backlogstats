@@ -1,0 +1,27 @@
+meta {
+  name: Refresh Token
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/auth/refresh
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "refresh_token": "{{refreshToken}}"
+  }
+}
+
+docs {
+  Exchange a refresh token for a new access token.
+
+  Request Body:
+  - refresh_token (required): A valid refresh token from login or register
+
+  Returns: 200 OK with new access_token, refresh_token, and token_type
+  Returns: 401 Unauthorized if refresh token is invalid or expired
+}

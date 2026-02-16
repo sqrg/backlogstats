@@ -1,8 +1,8 @@
-"""Initial tables: users, games_cache, user_games
+"""initial tables with auth and platform
 
-Revision ID: 943725f07b68
+Revision ID: c8a59b8ff950
 Revises: 
-Create Date: 2026-01-25 14:54:29.121835
+Create Date: 2026-02-16 10:15:24.827734
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ import sqlmodel
 
 
 # revision identifiers, used by Alembic.
-revision: str = '943725f07b68'
+revision: str = 'c8a59b8ff950'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -38,6 +38,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sqlmodel.sql.sqltypes.AutoString(length=50), nullable=False),
     sa.Column('email', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=False),
+    sa.Column('hashed_password', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -49,10 +50,13 @@ def upgrade() -> None:
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('game_id', sa.Integer(), nullable=False),
     sa.Column('igdb_id', sa.Integer(), nullable=False),
+    sa.Column('platform_igdb_id', sa.Integer(), nullable=False),
+    sa.Column('platform_name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('added_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['game_id'], ['games_cache.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('user_id', 'igdb_id', 'platform_igdb_id', name='uq_user_game_platform')
     )
     op.create_index(op.f('ix_user_games_game_id'), 'user_games', ['game_id'], unique=False)
     op.create_index(op.f('ix_user_games_igdb_id'), 'user_games', ['igdb_id'], unique=False)

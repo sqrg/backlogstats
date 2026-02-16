@@ -1,33 +1,11 @@
 from sqlmodel import Session, select
-from typing import Optional
 from datetime import datetime
 
-from app.models.db import User, GameCache, UserGame
+from app.models.db import GameCache, UserGame
 from app.services.igdb_service import igdb_service
 
 
 class LibraryService:
-    async def get_or_create_user(self, session: Session, user_id: int) -> Optional[User]:
-        """Get user by ID. For Phase 1, we create a default user if none exists."""
-        user = session.get(User, user_id)
-        return user
-
-    async def create_default_user(self, session: Session) -> User:
-        """Create a default user for Phase 1 (before auth is implemented)."""
-        user = User(username="default", email="default@backlogstats.local")
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-        return user
-
-    async def get_or_create_default_user(self, session: Session) -> User:
-        """Get or create the default user for Phase 1."""
-        statement = select(User).where(User.username == "default")
-        user = session.exec(statement).first()
-        if not user:
-            user = await self.create_default_user(session)
-        return user
-
     async def get_or_cache_game(self, session: Session, igdb_id: int) -> GameCache:
         """Get game from cache or fetch from IGDB and cache it."""
         statement = select(GameCache).where(GameCache.igdb_id == igdb_id)
@@ -67,25 +45,34 @@ class LibraryService:
         return game_cache
 
     async def add_game_to_library(
-        self, session: Session, user_id: int, igdb_id: int
+        self,
+        session: Session,
+        user_id: int,
+        igdb_id: int,
+        platform_igdb_id: int,
+        platform_name: str,
     ) -> UserGame:
-        """Add a game to user's library."""
-        # Check if already in library
+        """Add a game to user's collection for a specific platform."""
+        # Check if already in collection for this platform
         statement = select(UserGame).where(
-            UserGame.user_id == user_id, UserGame.igdb_id == igdb_id
+            UserGame.user_id == user_id,
+            UserGame.igdb_id == igdb_id,
+            UserGame.platform_igdb_id == platform_igdb_id,
         )
         existing = session.exec(statement).first()
         if existing:
-            raise ValueError("Game already in library")
+            raise ValueError("Game already in collection for this platform")
 
         # Get or cache the game
         game_cache = await self.get_or_cache_game(session, igdb_id)
 
-        # Create library entry
+        # Create collection entry
         user_game = UserGame(
             user_id=user_id,
             game_id=game_cache.id,
             igdb_id=igdb_id,
+            platform_igdb_id=platform_igdb_id,
+            platform_name=platform_name,
         )
         session.add(user_game)
         session.commit()
@@ -99,7 +86,7 @@ class LibraryService:
         page: int = 1,
         page_size: int = 20,
     ) -> tuple[list[UserGame], int]:
-        """Get paginated list of games in user's library."""
+        """Get paginated list of games in user's collection."""
         # Count total
         count_statement = select(UserGame).where(UserGame.user_id == user_id)
         total = len(session.exec(count_statement).all())
@@ -115,21 +102,23 @@ class LibraryService:
         games = session.exec(statement).all()
         return list(games), total
 
-    def get_library_game(
+    def get_library_games_by_igdb_id(
         self, session: Session, user_id: int, igdb_id: int
-    ) -> Optional[UserGame]:
-        """Get a specific game from user's library by IGDB ID."""
+    ) -> list[UserGame]:
+        """Get all entries for a specific game in user's collection (one per platform)."""
         statement = select(UserGame).where(
             UserGame.user_id == user_id, UserGame.igdb_id == igdb_id
         )
-        return session.exec(statement).first()
+        return list(session.exec(statement).all())
 
     def remove_from_library(
-        self, session: Session, user_id: int, igdb_id: int
+        self, session: Session, user_id: int, igdb_id: int, platform_igdb_id: int
     ) -> bool:
-        """Remove a game from user's library."""
+        """Remove a game+platform entry from user's collection."""
         statement = select(UserGame).where(
-            UserGame.user_id == user_id, UserGame.igdb_id == igdb_id
+            UserGame.user_id == user_id,
+            UserGame.igdb_id == igdb_id,
+            UserGame.platform_igdb_id == platform_igdb_id,
         )
         user_game = session.exec(statement).first()
         if not user_game:

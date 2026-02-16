@@ -7,15 +7,20 @@ meta {
 get {
   url: {{baseUrl}}/library/games/1025
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 docs {
-  Get a specific game from your library by its IGDB ID.
+  Get all entries for a specific game in your collection (one per platform).
 
   Path Parameters:
   - igdb_id: The IGDB game ID (integer > 0)
 
-  Returns: 200 OK with the game details if found
-  Returns: 404 Not Found if the game is not in your library
+  Returns: 200 OK with an array of game entries (one per platform)
+  Returns: 404 Not Found if the game is not in your collection
+  Returns: 401 Unauthorized if not authenticated
 }

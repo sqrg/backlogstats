@@ -7,7 +7,11 @@ meta {
 get {
   url: {{baseUrl}}/library/games?page=1&page_size=20
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 params:query {
@@ -16,15 +20,17 @@ params:query {
 }
 
 docs {
-  Get all games in your personal library with pagination.
+  Get all games in your collection with pagination.
 
   Query Parameters:
   - page (optional): Page number (default: 1, minimum: 1)
   - page_size (optional): Items per page (default: 20, range: 1-100)
 
   Returns:
-  - games: Array of library game objects
-  - total: Total number of games in library
+  - games: Array of library game objects (includes platform info)
+  - total: Total number of games in collection
   - page: Current page number
   - page_size: Items per page
+
+  Returns: 401 Unauthorized if not authenticated
 }

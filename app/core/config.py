@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     igdb_client_id: str = ""
     igdb_client_secret: str = ""
 
+    # JWT Authentication
+    secret_key: str = "change-me-in-production"
+    access_token_expire_minutes: int = 30
+    refresh_token_expire_days: int = 7
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
